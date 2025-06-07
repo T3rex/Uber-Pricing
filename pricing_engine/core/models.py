@@ -18,6 +18,10 @@ class PricingModule(models.Model):
     def __str__(self):
         return self.name
     
+    def get_dap_for_day(self, day):
+        return self.dap_entries.filter(day_of_week=day, is_active=True)
+
+    
 class DistanceBasePrice(models.Model):
     pricing_module = models.ForeignKey(PricingModule,on_delete=models.CASCADE,related_name='dbp_entries')
     day_of_week = models.CharField(max_length=10,choices=DayOfWeek.choices)
@@ -27,7 +31,7 @@ class DistanceBasePrice(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.day_of_week} - {self.base_price} for {self.base_distance} km"
+        return f"{self.day_of_week} - {self.base_price} for {self.base_distance} km as per {self.pricing_module} pricing module"
     
 class DistanceAdditionalPrice(models.Model):
     pricing_module = models.ForeignKey(PricingModule, on_delete=models.CASCADE, related_name='dap_entries')
@@ -72,4 +76,14 @@ class WaitingCharges(models.Model):
         return f"{self.day_of_week}: ₹{self.price_per_unit} per {self.cycle_minutes} min"
 
 
-
+class Ride(models.Model):
+    pricing_module = models.ForeignKey(PricingModule,on_delete=models.PROTECT)
+    start_time = models.DateField()
+    end_time = models.DateField()
+    waiting_time_minutes = models.PositiveIntegerField(default=0)
+    total_distance = models.DecimalField(max_digits=10, decimal_places=2)
+    calculated_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Ride #{self.id} - {self.start_time.date()} - ₹{self.calculated_price or 'Unbilled'}"
