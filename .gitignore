@@ -8,6 +8,8 @@ __pycache__/
 # Ignore environment variable files
 .env
 
+# Ignore SQLite databases
+*.sqlite3
 
 # Ignore VSCode/JetBrains IDE settings (optional)
 .vscode/
