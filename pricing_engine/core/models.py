@@ -45,3 +45,31 @@ class DistanceAdditionalPrice(models.Model):
         return f"{self.day_of_week}: {self.start_km}-{self.end_km} km @ {self.price_per_km}/km"
 
 
+class TimeMultiplierFactor(models.Model):
+    pricing_module = models.ForeignKey(PricingModule,on_delete=models.CASCADE,related_name="tmf_entries")
+    day_of_week = models.CharField(max_length=10, choices=DayOfWeek.choices)
+    start_minute = models.PositiveIntegerField()
+    end_minute = models.PositiveIntegerField()
+    multiplier = models.DecimalField(max_digits=4, decimal_places=2)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['start_minute']
+
+    def __str__(self):
+        return f"{self.day_of_week}: {self.start_minute}-{self.end_minute} min → x{self.multiplier}"
+    
+class WaitingCharges(models.Model):
+    pricing_module = models.ForeignKey(PricingModule, on_delete=models.CASCADE, related_name='wc_entries')
+    day_of_week = models.CharField(max_length=10, choices=DayOfWeek.choices)
+    price_per_unit = models.DecimalField(max_digits=6, decimal_places=2)
+    cycle_minutes = models.PositiveIntegerField()  
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.day_of_week}: ₹{self.price_per_unit} per {self.cycle_minutes} min"
+
+
+
