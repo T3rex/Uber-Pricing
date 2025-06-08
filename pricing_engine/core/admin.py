@@ -71,7 +71,7 @@ class PricingModuleAdmin(admin.ModelAdmin):
 @admin.register(Ride)
 class PricingModuleAdmin(admin.ModelAdmin):
     form =RideForm
-    list_display = ['id','start_time', 'end_time','waiting_time_minutes','total_distance','calculated_price','created_at','created_by','updated_by']
+    list_display = ['id','start_time', 'end_time','waiting_time_minutes','total_distance','calculated_price','pricing_module','created_at','created_by','updated_by']
     readonly_fields = list_display 
 
     def save_model(self, request, obj, form, change):

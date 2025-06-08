@@ -1,7 +1,6 @@
-import calendar
-from decimal import Decimal
 from django.db import models
 from django.contrib.auth import get_user_model
+from .services.pricing_service import PricingService
 
 
 # Create your models here.
@@ -109,86 +108,7 @@ class Ride(models.Model):
         return f"Ride #{self.id} - {self.start_time.date()} - ₹{self.calculated_price}"
 
     def calculate_price(self):
-        day_index = self.start_time.weekday()  
-        day_of_week = calendar.day_name[day_index]
-
-        # === DBP Calculation ===
-        dbp_object = DistanceBasePrice.objects.filter(
-            pricing_module=self.pricing_module,
-            day_of_week=day_of_week,
-            is_active=True
-        ).first()
-
-        base_price = Decimal('0.00')
-        base_distance = Decimal('0.00')
-
-        if dbp_object:
-            base_price = dbp_object.base_price
-            base_distance = dbp_object.base_distance
-
-        dbp = base_price  
-
-        # === DAP Calculation ===
-        additional_distance = max(Decimal('0.00'), self.total_distance - base_distance)
-        dap_slabs = DistanceAdditionalPrice.objects.filter(
-            pricing_module=self.pricing_module,
-            day_of_week=day_of_week,
-            is_active=True
-        ).order_by('start_km')
-
-        dap = Decimal('0.00')
-        remaining_dist = additional_distance
-
-        for slab in dap_slabs:
-            slab_range = slab.end_km - slab.start_km
-            if remaining_dist > slab_range:
-                dap += slab_range * slab.price_per_km
-                remaining_dist -= slab_range
-            else:
-                dap += remaining_dist * slab.price_per_km
-                remaining_dist = Decimal('0.00')
-                break
-
-        if remaining_dist > 0 and dap_slabs.exists():
-            dap += remaining_dist * dap_slabs.last().price_per_km
-
-        # === TMF Calculation ===
-        ride_minutes = int((self.end_time - self.start_time).total_seconds() / 60)
-        tmf_slabs = TimeMultiplierFactor.objects.filter(
-            pricing_module=self.pricing_module,
-            day_of_week=day_of_week,
-            is_active=True
-        ).order_by('start_minute')
-
-        tmf = Decimal('0.00')
-        remaining_minutes = ride_minutes
-
-        for slab in tmf_slabs:
-            slab_range = slab.end_minute - slab.start_minute
-            if remaining_minutes > slab_range:
-                tmf += slab_range * slab.multiplier
-                remaining_minutes -= slab_range
-            else:
-                tmf += remaining_minutes * slab.multiplier
-                remaining_minutes = 0
-                break
-
-        if remaining_minutes > 0 and tmf_slabs.exists():
-            tmf += remaining_minutes * tmf_slabs.last().multiplier
-
-        # === WC Calculation ===
-        wc_object = WaitingCharges.objects.filter(
-            pricing_module=self.pricing_module,
-            day_of_week=day_of_week
-        ).first()
-
-        wc = Decimal('0.00')
-        if wc_object:
-            total_units = Decimal(self.waiting_time_minutes) / Decimal(wc_object.cycle_minutes)
-            wc = wc_object.price_per_unit * total_units
-
-        # === Final Price ===
-        self.calculated_price = (dbp + dap) + tmf + wc
+        self.calculated_price = PricingService.calculate_price(self)
 
         
 
