@@ -1,7 +1,7 @@
 # pricing_engine/urls.py
 from django.urls import path
-from .views import RideCreateAPIView
+from . import views
 
 urlpatterns = [
-    path('api/rides/', RideCreateAPIView.as_view(), name='ride-create'),
+    path('api/rides/', views.RideCreateAPIView.as_view(), name='ride-create'),   
 ]

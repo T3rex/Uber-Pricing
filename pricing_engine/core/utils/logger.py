@@ -1,5 +1,4 @@
 from core.models import PricingConfigChangeLog
-from django.contrib.contenttypes.models import ContentType
 
 def log_pricing_config_change(instance, action, user=None, summary=""):
     model_name = instance.__class__.__name__

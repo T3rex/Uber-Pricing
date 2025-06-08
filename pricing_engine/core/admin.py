@@ -67,6 +67,12 @@ class TMFAdmin(admin.ModelAdmin):
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
+        action= 'UPDATE' if change else 'CREATE'
+        summary = f"Start minute: {obj.start_minute}, End minute: {obj.end_minute}, Day: {obj.day_of_week},Multiplier :{obj.multiplier}, Is Active:{obj.is_active}"
+        log_pricing_config_change(obj,action=action,user=request.user,summary=summary)
+
+        
+
 @admin.register(WaitingCharges)
 class WCAdmin(admin.ModelAdmin):
     form =WCForm
@@ -93,7 +99,7 @@ class PricingModuleAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 @admin.register(Ride)
-class PricingModuleAdmin(admin.ModelAdmin):
+class RideAdmin(admin.ModelAdmin):
     form =RideForm
     list_display = ['id','start_time', 'end_time','waiting_time_minutes','total_distance','calculated_price','pricing_module','created_at','created_by','updated_by']
     readonly_fields = list_display 

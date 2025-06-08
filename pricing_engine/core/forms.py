@@ -11,7 +11,9 @@ class PMForm(forms.ModelForm):
 class RideForm(forms.ModelForm):
     class Meta:
         model = Ride
-        fields = '__all__'
+        fields = ['pricing_module', 'start_time', 'end_time', 'waiting_time_minutes', 'total_distance']
+        
+
 class DBPForm(forms.ModelForm):
     class Meta:
         model = DistanceBasePrice

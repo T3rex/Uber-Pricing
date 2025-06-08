@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Ride
 from .serializers import RideSerializer
+from django.shortcuts import render
 
 class RideCreateAPIView(APIView):
     def post(self, request):
@@ -15,3 +16,4 @@ class RideCreateAPIView(APIView):
             ride.save()
             return Response(RideSerializer(ride).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
