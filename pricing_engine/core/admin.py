@@ -1,22 +1,36 @@
 from django.contrib import admin
+from core.utils.logger import log_pricing_config_change
 from .forms import DAPForm,DBPForm,TMFForm,WCForm,PMForm,RideForm
-from .models import PricingModule,DistanceBasePrice, DistanceAdditionalPrice,TimeMultiplierFactor,WaitingCharges,Ride
-
+from .models import PricingModule,DistanceBasePrice, DistanceAdditionalPrice
+from .models import PricingConfigChangeLog,TimeMultiplierFactor,WaitingCharges,Ride
 # Register your models here.
 
 
 
 @admin.register(DistanceBasePrice)
 class DBPAdmin(admin.ModelAdmin):
-    form =DBPForm
-    list_display = ['id','day_of_week', 'base_distance', 'base_price', 'is_active', 'pricing_module','created_at','created_by','updated_by']
+    form = DBPForm
+    list_display = ['id', 'day_of_week', 'base_distance', 'base_price', 'is_active', 'pricing_module', 'created_at', 'created_by', 'updated_by']
     readonly_fields = ('created_by', 'updated_by')  
 
     def save_model(self, request, obj, form, change):
+        # Set user fields
         if not obj.pk: 
             obj.created_by = request.user
         obj.updated_by = request.user
+
         super().save_model(request, obj, form, change)
+
+        # Log the action
+        action = 'UPDATE' if change else 'CREATE'
+        summary = f"Base price: {obj.base_price}, Base distance: {obj.base_distance}, Day: {obj.day_of_week}"
+        log_pricing_config_change(obj, action=action, user=request.user, summary=summary)
+
+    def delete_model(self, request, obj):
+        summary = f"Deleted base price config for {obj.day_of_week} (Base price: {obj.base_price})"
+        log_pricing_config_change(obj, action='DELETE', user=request.user, summary=summary)
+        super().delete_model(request, obj)
+
 
 @admin.register(DistanceAdditionalPrice)
 class DAPAdmin(admin.ModelAdmin):
@@ -30,6 +44,16 @@ class DAPAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
+
+        action= 'UPDATE' if change else 'CREATE'
+        summary = f"Start km: {obj.start_km}, End KM: {obj.end_km}, Day: {obj.day_of_week},Price per km :{obj.price_per_km}, Is Active:{obj.is_active}"
+        log_pricing_config_change(obj,action=action,user=request.user,summary=summary)
+    
+    def delete_model(self, request, obj):
+        summary = f"Deleted Distance Additional Price config for {obj.day_of_week} (Base price: {obj.price_per_km} and slab [{obj.start_km}-{obj.end_km}])"
+        log_pricing_config_change(obj, action='DELETE', user=request.user, summary=summary)
+        super().delete_model(request, obj)
+
 
 @admin.register(TimeMultiplierFactor)
 class TMFAdmin(admin.ModelAdmin):
@@ -79,3 +103,13 @@ class PricingModuleAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
+
+
+
+
+@admin.register(PricingConfigChangeLog)
+class PricingConfigChangeLogAdmin(admin.ModelAdmin):
+    list_display = ('model_name', 'action', 'changed_by', 'timestamp')
+    readonly_fields = ('model_name', 'object_id', 'action', 'changed_by', 'timestamp', 'change_summary')
+    list_filter = ('model_name', 'action', 'changed_by')
+

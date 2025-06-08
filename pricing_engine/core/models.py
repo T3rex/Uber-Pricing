@@ -15,6 +15,8 @@ class DayOfWeek(models.TextChoices):
     FRIDAY = 'Friday', 'Friday'
     SATURDAY = 'Saturday', 'Saturday'
     SUNDAY = 'Sunday', 'Sunday'
+
+    
 class PricingModule(models.Model):
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=False)
@@ -111,8 +113,16 @@ class Ride(models.Model):
         self.calculated_price = PricingService.calculate_price(self)
 
         
+class PricingConfigChangeLog(models.Model):
+    model_name = models.CharField(max_length=100)
+    object_id = models.PositiveIntegerField()
+    action = models.CharField(max_length=20, choices=[('CREATE', 'CREATE'), ('UPDATE', 'UPDATE'), ('DELETE', 'DELETE')])
+    changed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    change_summary = models.TextField(blank=True, help_text="Describe what was changed.")
 
-
+    def __str__(self):
+        return f"{self.model_name} {self.action} by {self.changed_by} at {self.timestamp}"
 
         
             
