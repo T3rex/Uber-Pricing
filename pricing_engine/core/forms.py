@@ -1,7 +1,17 @@
 from django import forms
-from .models import DistanceBasePrice,DistanceAdditionalPrice,TimeMultiplierFactor,WaitingCharges
+from .models import DistanceBasePrice,DistanceAdditionalPrice,TimeMultiplierFactor,WaitingCharges, PricingModule,Ride
 
 
+
+class PMForm(forms.ModelForm):
+    class Meta:
+        model = PricingModule
+        fields = '__all__'
+
+class RideForm(forms.ModelForm):
+    class Meta:
+        model = Ride
+        fields = '__all__'
 class DBPForm(forms.ModelForm):
     class Meta:
         model = DistanceBasePrice
