@@ -19,3 +19,88 @@ A configurable pricing engine built with **Django** and **Django Admin**, allowi
 - Validation
 - Audit logging (who changed what, when)
 - REST API to calculate pricing for a ride
+
+## Setup Instructions
+
+### 1.Clone the Repository
+
+```bash
+git clone https://github.com/T3rex/Uber-Pricing.git
+
+cd Uber-Pricing
+```
+
+### 2.Create Virtual Environment
+
+```bash
+python -m venv env
+source env/bin/activate
+```
+
+### 3.Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Apply Migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 5.Create Superuser
+
+```bash
+python manage.py createsuperuser
+```
+
+### 6.Run the Development Server
+
+```bash
+python manage.py runserver
+```
+
+## API Usage
+
+### Create a Ride and POST
+
+```json
+POST request to "http://127.0.0.1:8000/api/rides/"
+{
+  "pricing_module": 1,
+  "start_time": "2025-06-09T10:00:00Z",
+  "end_time": "2025-06-09T10:45:00Z",
+  "waiting_time_minutes": 3,
+  "total_distance": 7.5
+}
+```
+
+### Response
+
+```json
+{
+  "id": 1,
+  "calculated_price": 145.50,
+  ...
+}
+```
+
+## Tech stack
+
+- Python 3.x
+- Django 4.x
+- Django REST Framework
+- SQLite3 (default, can be changed)
+- Django Admin for backend management
+
+## TODO
+
+- [x] Pricing configuration models
+- [x] Admin interface with validation
+- [x] Price calculation logic
+- [x] API to trigger ride creation + price computation
+- [x] Audit log model
+- [ ] Add unit tests for service layer
+- [ ] Swagger or Postman collection for API
