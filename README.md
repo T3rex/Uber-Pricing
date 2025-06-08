@@ -15,3 +15,7 @@ A configurable pricing engine built with **Django** and **Django Admin**, allowi
 - Enable/Disable multiple pricing module
 - Calculate final ride price using:
   > Price = (DBP + (Dn _ DAP)) + (Tn _ TMF) + WC
+- Admin interface with:
+- Validation
+- Audit logging (who changed what, when)
+- REST API to calculate pricing for a ride
