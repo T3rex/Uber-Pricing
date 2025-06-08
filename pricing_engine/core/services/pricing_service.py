@@ -33,26 +33,27 @@ class PricingService:
 
         # === DAP ===
         additional_distance = max(Decimal('0.00'), total_distance - base_distance)
-        dap_slabs = DistanceAdditionalPrice.objects.filter(
-            pricing_module=pricing_module,
-            day_of_week=day_of_week,
-            is_active=True
-        ).order_by('start_km')
+        if additional_distance>Decimal('0.00'):
+            dap_slabs = DistanceAdditionalPrice.objects.filter(
+                pricing_module=pricing_module,
+                day_of_week=day_of_week,
+                is_active=True
+            ).order_by('start_km')
 
-        dap = Decimal('0.00')
-        remaining_dist = additional_distance
-        for slab in dap_slabs:
-            slab_range = slab.end_km - slab.start_km
-            if remaining_dist > slab_range:
-                dap += slab_range * slab.price_per_km
-                remaining_dist -= slab_range
-            else:
-                dap += remaining_dist * slab.price_per_km
-                remaining_dist = Decimal('0.00')
-                break
+            dap = Decimal('0.00')
+            remaining_dist = additional_distance
+            for slab in dap_slabs:
+                slab_range = slab.end_km - slab.start_km
+                if remaining_dist > slab_range:
+                    dap += slab_range * slab.price_per_km
+                    remaining_dist -= slab_range
+                else:
+                    dap += remaining_dist * slab.price_per_km
+                    remaining_dist = Decimal('0.00')
+                    break
 
-        if remaining_dist > 0 and dap_slabs.exists():
-            dap += remaining_dist * dap_slabs.last().price_per_km
+            if remaining_dist > 0 and dap_slabs.exists():
+                dap += remaining_dist * dap_slabs.last().price_per_km
 
         # === TMF ===
         ride_minutes = int((end_time - start_time).total_seconds() / 60)
@@ -80,7 +81,8 @@ class PricingService:
         # === WC ===
         wc_obj = WaitingCharges.objects.filter(
             pricing_module=pricing_module,
-            day_of_week=day_of_week
+            day_of_week=day_of_week,
+            is_active=True
         ).first()
 
         wc = Decimal('0.00')

@@ -14,6 +14,7 @@ class RideSerializer(serializers.ModelSerializer):
         total_distance = data.get('total_distance')
         waiting_time = data.get('waiting_time_minutes')
 
+        
         if end_time and start_time and end_time <= start_time:
             raise serializers.ValidationError("End time must be after start time.")
 
