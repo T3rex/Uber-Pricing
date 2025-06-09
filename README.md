@@ -82,10 +82,21 @@ POST request to "http://127.0.0.1:8000/api/rides/"
 ```json
 {
   "id": 1,
-  "calculated_price": 145.50,
+  "dap_ride": 12.50,
+  "tmf_ride": 10.00,
+  "wc_ride": 3.00,
+  "dbp_ride": 20.00,
+  "total_price": 145.50,
   ...
 }
 ```
+
+## Use Interface
+
+- Visit the home page: http://127.0.0.1:8000/
+- Fill in ride details via the form
+- Submit to calculate pricing
+- View detailed results on the results page
 
 ## Tech stack
 
