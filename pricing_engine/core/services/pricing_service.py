@@ -26,21 +26,24 @@ class PricingService:
             day_of_week=day_of_week,
             is_active=True
         ).first()
-
-        base_price = dbp_obj.base_price if dbp_obj else Decimal('0.00')
+        dbp = Decimal('0.00')
         base_distance = dbp_obj.base_distance if dbp_obj else Decimal('0.00')
-        dbp = base_price
+        base_price = dbp_obj.base_price if dbp_obj else Decimal('0.00')
+        if total_distance > base_distance:
+            dbp = base_price
+        else:
+            dbp = (total_distance / base_distance) * base_price if base_distance > 0 else Decimal('0.00')
 
         # === DAP ===
         additional_distance = max(Decimal('0.00'), total_distance - base_distance)
+        dap = Decimal('0.00')
         if additional_distance>Decimal('0.00'):
             dap_slabs = DistanceAdditionalPrice.objects.filter(
                 pricing_module=pricing_module,
                 day_of_week=day_of_week,
                 is_active=True
             ).order_by('start_km')
-
-            dap = Decimal('0.00')
+            
             remaining_dist = additional_distance
             for slab in dap_slabs:
                 slab_range = slab.end_km - slab.start_km
@@ -90,4 +93,4 @@ class PricingService:
             units = Decimal(waiting_minutes) / Decimal(wc_obj.cycle_minutes)
             wc = wc_obj.price_per_unit * units
 
-        return [dap, dbp, tmf, wc]
+        return {"dap":dap,"dbp": dbp,"tmf": tmf,"wc": wc}

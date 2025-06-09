@@ -17,6 +17,32 @@ class RideFormUser(forms.ModelForm):
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get('start_time')
+        end_time = cleaned_data.get('end_time')
+        waiting_time_minutes = cleaned_data.get('waiting_time_minutes')
+        total_distance = cleaned_data.get('total_distance')
+
+        #start time is before end time
+        if start_time and end_time and start_time >= end_time:
+            raise forms.ValidationError("Start time must be before end time.", code="invalid")
+        
+        #waiting time is non-negative
+        if waiting_time_minutes is not None and waiting_time_minutes < 0:
+            raise forms.ValidationError("Waiting time must be greater than or equal to 0 minutes.", code="invalid")
+        #waiting time in less than total ride time
+        if start_time and end_time and waiting_time_minutes is not None:
+            total_ride_time = (end_time - start_time).total_seconds() / 60
+            if waiting_time_minutes > total_ride_time:
+                raise forms.ValidationError("Waiting time cannot be greater than total ride time.", code="invalid")
+
+        #total distance is positive
+        if total_distance is not None and total_distance < 0:
+            raise forms.ValidationError("Total distance must be greater than or equal to 0.", code="invalid")
+
+        return cleaned_data 
+
 class RideFormAdmin(forms.ModelForm):
     class Meta:
         model = Ride

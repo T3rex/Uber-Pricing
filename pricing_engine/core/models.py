@@ -114,13 +114,17 @@ class Ride(models.Model):
         return f"Ride #{self.id} - {self.start_time.date()} - ₹{self.total_price}"
 
     def calculate_price(self):
-        [dap, dbp, tmf, wc] = PricingService.calculate_price(self)
-        self.dap_ride = dap
-        self.dbp_ride = dbp
-        self.tmf_ride = tmf
-        self.wc_ride = wc
-        self.total_price = dap + dbp + tmf + wc
-        self.save()
+        try:
+            price_breakup = PricingService.calculate_price(self)
+            print(f"Price breakup for ride {self.id}: {price_breakup}")
+            self.dap_ride = price_breakup['dap']
+            self.dbp_ride = price_breakup['dbp']
+            self.tmf_ride = price_breakup['tmf']
+            self.wc_ride = price_breakup['wc']
+            self.total_price = price_breakup['dap'] + price_breakup['dbp'] + price_breakup['tmf'] + price_breakup['wc']
+            self.save()
+        except Exception as e:
+            raise ValueError(f"Error calculating price for ride {self.id}: {str(e)}")
 
         
 class PricingConfigChangeLog(models.Model):

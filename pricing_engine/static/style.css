@@ -67,6 +67,7 @@ body {
   border-radius: 6px;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .form-group input:focus,
