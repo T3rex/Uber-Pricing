@@ -100,17 +100,27 @@ class Ride(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     waiting_time_minutes = models.PositiveIntegerField(default=0)
+    dap_ride = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    dbp_ride = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    tmf_ride = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    wc_ride = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)    
     total_distance = models.DecimalField(max_digits=10, decimal_places=2)
-    calculated_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, null=True, blank=True, related_name="ride_created", on_delete=models.SET_NULL)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name="ride_updated", on_delete=models.SET_NULL)
 
     def __str__(self):
-        return f"Ride #{self.id} - {self.start_time.date()} - ₹{self.calculated_price}"
+        return f"Ride #{self.id} - {self.start_time.date()} - ₹{self.total_price}"
 
     def calculate_price(self):
-        self.calculated_price = PricingService.calculate_price(self)
+        [dap, dbp, tmf, wc] = PricingService.calculate_price(self)
+        self.dap_ride = dap
+        self.dbp_ride = dbp
+        self.tmf_ride = tmf
+        self.wc_ride = wc
+        self.total_price = dap + dbp + tmf + wc
+        self.save()
 
         
 class PricingConfigChangeLog(models.Model):

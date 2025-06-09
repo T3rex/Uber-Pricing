@@ -8,7 +8,7 @@ class PMForm(forms.ModelForm):
         model = PricingModule
         fields = '__all__'
 
-class RideForm(forms.ModelForm):
+class RideFormUser(forms.ModelForm):
     class Meta:
         model = Ride
         fields = ['pricing_module', 'start_time', 'end_time', 'waiting_time_minutes', 'total_distance']
@@ -16,7 +16,12 @@ class RideForm(forms.ModelForm):
             'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
-    
+
+class RideFormAdmin(forms.ModelForm):
+    class Meta:
+        model = Ride
+        fields = ['id','start_time', 'end_time','waiting_time_minutes','total_distance','dap_ride','dbp_ride','tmf_ride','wc_ride','total_price','pricing_module','created_by','updated_by']
+        
 
 class DBPForm(forms.ModelForm):
     class Meta:

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from core.utils.logger import log_pricing_config_change
-from .forms import DAPForm,DBPForm,TMFForm,WCForm,PMForm,RideForm
+from .forms import DAPForm,DBPForm,TMFForm,WCForm,PMForm,RideFormAdmin
 from .models import PricingModule,DistanceBasePrice, DistanceAdditionalPrice
 from .models import PricingConfigChangeLog,TimeMultiplierFactor,WaitingCharges,Ride
 # Register your models here.
@@ -118,8 +118,8 @@ class PricingModuleAdmin(admin.ModelAdmin):
 
 @admin.register(Ride)
 class RideAdmin(admin.ModelAdmin):
-    form =RideForm
-    list_display = ['id','start_time', 'end_time','waiting_time_minutes','total_distance','calculated_price','pricing_module','created_at','created_by','updated_by']
+    form =RideFormAdmin
+    list_display = ['id','start_time', 'end_time','waiting_time_minutes','total_distance','dap_ride','dbp_ride','tmf_ride','wc_ride','total_price','pricing_module','created_at','created_by','updated_by']
     readonly_fields = list_display 
 
     def save_model(self, request, obj, form, change):

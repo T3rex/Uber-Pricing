@@ -90,4 +90,4 @@ class PricingService:
             units = Decimal(waiting_minutes) / Decimal(wc_obj.cycle_minutes)
             wc = wc_obj.price_per_unit * units
 
-        return (dbp + dap) + tmf + wc
+        return [dap, dbp, tmf, wc]

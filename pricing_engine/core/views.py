@@ -6,7 +6,7 @@ from rest_framework import status
 from .models import Ride
 from .serializers import RideSerializer
 from django.shortcuts import render,redirect
-from .forms import RideForm
+from .forms import RideFormUser
 from django.contrib import messages
 
 
@@ -23,7 +23,7 @@ class RideCreateAPIView(APIView):
 
 def ride_view(request):
     if request.method == 'POST':
-        form = RideForm(request.POST)
+        form = RideFormUser(request.POST)
         if form.is_valid():
             ride = form.save(commit=False)
             ride.created_by = request.user
@@ -33,7 +33,7 @@ def ride_view(request):
             messages.success(request, 'Ride created successfully!')
             return redirect('ride_detail', pk=ride.pk)
     else:
-        form = RideForm()
+        form = RideFormUser()
     
     return render(request, 'ride_form.html', {'form': form})
 
