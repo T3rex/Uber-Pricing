@@ -1,14 +1,64 @@
 <!-- prettier-ignore -->
-{% extends "base.html" %} 
+
+{% extends "base.html" %}
 
 {% block title %}Uber Pricing{% endblock %}
 {% block header %}Price Breakup{% endblock %}
 
-{% block content %}
-<div>
-  {% if ride %}
-  <div class="ride-details">{{ride}}</div>
 
+{% block content %}
+<div class="ride-container">
+  {% if ride %}
+  <div class="ride-card">
+    <table class="ride-table">
+      <tbody>
+        <tr>
+          <th>Pricing Module</th>
+          <td>{{ ride.pricing_module }}</td>
+        </tr>
+        <tr>
+          <th>Start Time</th>
+          <td>{{ ride.start_time }}</td>
+        </tr>
+        <tr>
+          <th>End Time</th>
+          <td>{{ ride.end_time }}</td>
+        </tr>
+        <tr>
+          <th>Waiting Time (min)</th>
+          <td>{{ ride.waiting_time_minutes }}</td>
+        </tr>
+        <tr>
+          <th>Total Distance (km)</th>
+          <td>{{ ride.total_distance }}</td>
+        </tr>
+        <tr>
+          <th>Distance Based Price</th>
+          <td>₹{{ ride.dbp_ride }}</td>
+        </tr>
+        <tr>
+          <th>Distance Additional Price</th>
+          <td>₹{{ ride.dap_ride }}</td>
+        </tr>
+        <tr>
+          <th>Time Multiplying Factor</th>
+          <td>₹{{ ride.tmf_ride }}</td>
+        </tr>
+        <tr>
+          <th>Waiting Charges</th>
+          <td>₹{{ ride.wc_ride }}</td>
+        </tr>
+        <tr>
+          <th>Calculated Price</th>
+          <td class="highlight">₹{{ ride.total_price }}</td>
+        </tr>
+        <tr>
+          <th>Created At</th>
+          <td>{{ ride.created_at }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   {% else %}
   <div class="no-ride">
     <h2>No Ride Details Available</h2>
@@ -16,7 +66,8 @@
   </div>
   {% endif %}
 
-  <a href="{% url 'ride-form' %}">Create Another Ride</a>
+  <div class="action-link">
+    <a href="{% url 'ride-form' %}">Create Another Ride</a>
+  </div>
 </div>
-
 {% endblock %}
