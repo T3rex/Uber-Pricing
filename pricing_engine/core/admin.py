@@ -70,6 +70,11 @@ class TMFAdmin(admin.ModelAdmin):
         action= 'UPDATE' if change else 'CREATE'
         summary = f"Start minute: {obj.start_minute}, End minute: {obj.end_minute}, Day: {obj.day_of_week},Multiplier :{obj.multiplier}, Is Active:{obj.is_active}"
         log_pricing_config_change(obj,action=action,user=request.user,summary=summary)
+    
+    def delete_model(self, request, obj):
+        summary = f"Deleted Time Multiplier Factor config for {obj.day_of_week} (Multiplier: {obj.multiplier} and slab [{obj.start_minute}-{obj.end_minute}])"
+        log_pricing_config_change(obj, action='DELETE', user=request.user, summary=summary)
+        super().delete_model(request, obj)
 
         
 
@@ -85,6 +90,15 @@ class WCAdmin(admin.ModelAdmin):
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
+        action= 'UPDATE' if change else 'CREATE'
+        summary = f"Day: {obj.day_of_week}, Price per unit: {obj.price_per_unit}, Cycle minutes: {obj.cycle_minutes}, Is Active:{obj.is_active}"
+        log_pricing_config_change(obj,action=action,user=request.user,summary=summary)
+
+    def delete_model(self, request, obj):
+        summary = f"Deleted Waiting Charges config for {obj.day_of_week} (Price per unit: {obj.price_per_unit} and cycle minutes: {obj.cycle_minutes})"
+        log_pricing_config_change(obj, action='DELETE', user=request.user, summary=summary)
+        super().delete_model(request, obj)    
+
 
 @admin.register(PricingModule)
 class PricingModuleAdmin(admin.ModelAdmin):
@@ -97,6 +111,10 @@ class PricingModuleAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
+
+        action= 'UPDATE' if change else 'CREATE'
+        summary = f"Name: {obj.name}, Is Active: {obj.is_active}"
+        log_pricing_config_change(obj,action=action,user=request.user,summary=summary)
 
 @admin.register(Ride)
 class RideAdmin(admin.ModelAdmin):

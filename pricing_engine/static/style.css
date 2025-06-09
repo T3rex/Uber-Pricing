@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: url("https://images.unsplash.com/photo-1593950315186-76a92975b60c?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&w=6000");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #222;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+.header {
+  width: 100%;
+  background-color: rgba(76, 175, 80, 0.92);
+  color: #fff;
+  text-align: center;
+  padding: 24px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 8px 8px 0 0;
+}
+
+.container {
+  max-width: 600px;
+  width: 90%;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 35px;
+  border-radius: 12px 12px 12px 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+  color: #222;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  outline: none;
+}
+
+.button {
+  background-color: #4caf50;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
+  font-family: "Inter", sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #449d48;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 24px;
+  }
+
+  .header {
+    font-size: 1.5rem;
+    padding: 18px;
+  }
+}

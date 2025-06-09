@@ -1,0 +1,22 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %} 
+
+{% block title %}Uber Pricing{% endblock %}
+{% block header %}Price Breakup{% endblock %}
+
+{% block content %}
+<div>
+  {% if ride %}
+  <div class="ride-details">{{ride}}</div>
+
+  {% else %}
+  <div class="no-ride">
+    <h2>No Ride Details Available</h2>
+    <p>Please create a ride to see the details.</p>
+  </div>
+  {% endif %}
+
+  <a href="{% url 'ride-form' %}">Create Another Ride</a>
+</div>
+
+{% endblock %}

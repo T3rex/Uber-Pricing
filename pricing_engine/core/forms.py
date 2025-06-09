@@ -12,7 +12,11 @@ class RideForm(forms.ModelForm):
     class Meta:
         model = Ride
         fields = ['pricing_module', 'start_time', 'end_time', 'waiting_time_minutes', 'total_distance']
-        
+        widgets = {
+            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+    
 
 class DBPForm(forms.ModelForm):
     class Meta:
